@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turni Capitel</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ee; --surface: #ffffff; --surface2: #f0ede6; --border: #e2ddd5; --border2: #cec9bf;
+  --text: #1a1814; --text2: #6b6560; --text3: #9e9890; --accent: #2d4a3e; --accent2: #3d6b5a;
+  --danger: #8b3a2a; --danger-light: #f5e8e5; --warn: #7a5c1e; --warn-light: #faf0dc;
+  --ok: #2d5a3a; --ok-light: #e8f5ec; --blue: #1e3f6b; --blue-light: #e5edf7;
+  --radius: 10px; --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+
+/* LOGIN */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;width:100%;max-width:400px;box-shadow:var(--shadow-md)}
+.login-logo{font-size:22px;font-weight:600;color:var(--accent);margin-bottom:.25rem}
+.login-sub{font-size:13px;color:var(--text3);margin-bottom:1.75rem}
+.login-mode-tabs{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:3px;gap:2px;margin-bottom:1.5rem}
+.login-mode-tab{flex:1;padding:7px 10px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;border:none;background:transparent;color:var(--text2);border-radius:calc(var(--radius-sm) - 1px);cursor:pointer;transition:all .15s;text-align:center}
+.login-mode-tab.active{background:var(--accent);color:white}
+.login-field{margin-bottom:12px}
+.login-field label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:5px}
+.login-field input,.login-field select{width:100%;padding:9px 12px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;transition:border-color .15s}
+.login-field input:focus,.login-field select:focus{border-color:var(--accent2)}
+.login-error{background:var(--danger-light);color:var(--danger);font-size:13px;padding:8px 12px;border-radius:var(--radius-sm);margin-bottom:12px;display:none}
+.login-error.show{display:block}
+.login-btn{width:100%;padding:10px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;background:var(--accent);color:white;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:background .15s;margin-top:4px}
+.login-btn:hover{background:var(--accent2)}
+
+/* HEADER */
+.header{background:var(--accent);color:white;padding:0 1.5rem;display:flex;align-items:center;height:56px;gap:1rem;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-md)}
+.header-logo{font-size:18px;font-weight:600;letter-spacing:-0.3px;flex:1}
+.header-month{font-size:13px;opacity:0.75;font-family:'DM Mono',monospace}
+.header-user{font-size:12px;opacity:0.8;font-family:'DM Mono',monospace}
+.header-logout{font-size:12px;padding:5px 12px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:var(--radius-sm);color:white;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.header-logout:hover{background:rgba(255,255,255,.25)}
+
+/* LAYOUT */
+.main{max-width:900px;margin:0 auto;padding:1.5rem 1rem}
+.tabs{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;gap:2px;margin-bottom:1.5rem;box-shadow:var(--shadow);flex-wrap:wrap}
+.tab{flex:1;padding:8px 12px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;border:none;background:transparent;color:var(--text2);border-radius:calc(var(--radius) - 2px);cursor:pointer;transition:all .15s;text-align:center;white-space:nowrap}
+.tab:hover{background:var(--surface2);color:var(--text)}
+.tab.active{background:var(--accent);color:white}
+.section{display:none}
+.section.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.card-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:1rem}
+
+/* FORMS */
+.form-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.form-label{font-size:13px;color:var(--text2);min-width:80px;font-weight:500}
+input[type=text],input[type=password],input[type=date],input[type=number],select{flex:1;padding:8px 12px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;transition:border-color .15s;min-width:0}
+input:focus,select:focus{border-color:var(--accent2)}
+
+/* BUTTONS */
+.btn{padding:8px 16px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.btn.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn.danger{color:var(--danger);border-color:#e8c5be}
+.btn.danger:hover{background:var(--danger-light)}
+.btn.sm{padding:5px 10px;font-size:12px}
+
+/* BADGES */
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.3px}
+.badge-comande{background:var(--ok-light);color:var(--ok)}
+.badge-bar{background:var(--blue-light);color:var(--blue)}
+.badge-sala{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.badge-admin{background:#2d1a4a;color:#c4a8e8}
+
+/* MULTI-ROLE CHECKBOXES */
+.roles-checkboxes{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.role-check{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;user-select:none}
+.role-check input{width:15px;height:15px;cursor:pointer;accent-color:var(--accent)}
+
+/* EMPLOYEE LIST */
+.emp-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;transition:border-color .15s;flex-wrap:wrap}
+.emp-row:hover{border-color:var(--border2)}
+.emp-name{flex:1;font-size:14px;font-weight:500;min-width:100px}
+.emp-letter{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+.emp-roles{display:flex;gap:4px;flex-wrap:wrap}
+
+/* MONTH NAV */
+.month-nav{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.month-nav-title{font-size:17px;font-weight:600;flex:1}
+
+/* AVAILABILITY */
+.avail-day{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.avail-day:last-child{border-bottom:none}
+.avail-day-label{font-size:13px;min-width:90px;color:var(--text2);font-family:'DM Mono',monospace}
+.avail-day-label.weekend{color:var(--accent2);font-weight:600}
+.pill{display:inline-block;font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .12s;user-select:none}
+.pill:hover{border-color:var(--accent);color:var(--accent)}
+.pill.on{background:var(--accent);color:white;border-color:var(--accent)}
+.pill.disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+
+/* CALENDAR */
+.cal-day{display:grid;grid-template-columns:80px 1fr;gap:8px;margin-bottom:10px}
+.cal-day-label{padding-top:10px;font-size:12px;font-weight:600;color:var(--text2);font-family:'DM Mono',monospace;text-align:right;padding-right:8px}
+.cal-day-label.weekend{color:var(--accent2)}
+.cal-day-label .dn{font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.turn-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;box-shadow:var(--shadow)}
+.turn-box.complete{border-left:3px solid #5a9e6a}
+.turn-box.incomplete{border-left:3px solid #c2705a}
+.turn-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.turn-head-name{font-size:13px;font-weight:600}
+.turn-head-req{font-size:11px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px}
+.req-ok{background:var(--ok-light);color:var(--ok)}
+.req-warn{background:var(--warn-light);color:var(--warn)}
+.req-bad{background:var(--danger-light);color:var(--danger)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:12px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;transition:all .12s;user-select:none}
+.chip:hover:not(.unavail){border-color:var(--accent);color:var(--accent)}
+.chip.assigned{background:var(--ok-light);color:var(--ok);border-color:#a3d4ad;font-weight:500}
+.chip.unavail{opacity:.3;cursor:default}
+.alert{font-size:12px;padding:5px 10px;border-radius:var(--radius-sm);margin-top:8px;font-weight:500}
+.alert.ok{background:var(--ok-light);color:var(--ok)}
+.alert.warn{background:var(--warn-light);color:var(--warn)}
+.alert.bad{background:var(--danger-light);color:var(--danger)}
+
+/* SUMMARY */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.metric-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);font-weight:600;margin-bottom:4px}
+.metric-val{font-size:28px;font-weight:600;line-height:1;font-family:'DM Mono',monospace}
+.metric-val.good{color:var(--ok)}
+.metric-val.bad{color:var(--danger)}
+.recap-emp{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:8px;box-shadow:var(--shadow)}
+.recap-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.recap-name{flex:1;font-weight:600}
+.recap-n{font-size:13px;font-family:'DM Mono',monospace;color:var(--text2)}
+.shift-tags{display:flex;flex-wrap:wrap;gap:4px}
+.shift-tag{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);font-family:'DM Mono',monospace}
+
+/* DEADLINE */
+.deadline-banner{padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.deadline-banner.active{background:var(--ok-light);color:var(--ok);border:1px solid #a3d4ad}
+.deadline-banner.expired{background:var(--danger-light);color:var(--danger);border:1px solid #e8c5be}
+.deadline-banner.none{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+/* EMPLOYEE VIEW */
+.emp-view-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+.emp-view-name{font-size:18px;font-weight:600;flex:1}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--accent);color:white;padding:10px 18px;border-radius:var(--radius);font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .2s;z-index:999;pointer-events:none;box-shadow:var(--shadow-md);max-width:300px}
+.toast.show{opacity:1;transform:translateY(0)}
+
+hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+#screen-login{display:flex}
+#screen-admin{display:none}
+#screen-employee{display:none}
+
+/* PRINT SCHEDULE TABLE */
+.sched-wrap{overflow-x:auto}
+.sched-table{border-collapse:collapse;width:100%;font-size:12px;background:white}
+.sched-table th,.sched-table td{border:1px solid #ccc;padding:4px 7px;text-align:center;vertical-align:middle;white-space:nowrap}
+.sched-table thead th{background:#2d4a3e;color:white;font-size:11px;font-weight:600;letter-spacing:.4px}
+.sched-table .emp-col-h{text-align:left;min-width:120px}
+.sched-table .emp-col{text-align:left;font-weight:600;font-size:12px;background:#f5f3ee;position:sticky;left:0;z-index:1}
+.cell-pranzo{background:#fff3cd;color:#7a5c1e;font-size:11px;font-weight:700;border-radius:3px;padding:1px 4px}
+.cell-cena{background:#d4edda;color:#2d4a3e;font-size:11px;font-weight:700;border-radius:3px;padding:1px 4px}
+.cell-both{background:#cce5ff;color:#1e3f6b;font-size:11px;font-weight:700;border-radius:3px;padding:1px 4px}
+.cell-off{color:#ccc;font-size:10px}
+.weekend-col{background:#fef9f0 !important}
+.total-col{background:#f0ede6;font-weight:700;font-family:'DM Mono',monospace}
+.print-legend{margin-top:10px;font-size:11px;color:#666;display:flex;gap:16px;flex-wrap:wrap}
+.print-legend span{display:flex;align-items:center;gap:4px}
+
+@media print {
+  body>*{display:none!important}
+  #print-area{display:block!important;position:static!important}
+  .no-print{display:none!important}
+  .sched-table{font-size:9px}
+  .sched-table th,.sched-table td{padding:2px 4px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🍽 Capitel</div>
+    <div class="login-sub">Gestione turni — accedi al gestionale</div>
+    <div class="login-mode-tabs">
+      <button class="login-mode-tab active" onclick="setLoginMode('admin',this)">👤 Admin</button>
+      <button class="login-mode-tab" onclick="setLoginMode('employee',this)">🧑‍🍳 Dipendente</button>
+    </div>
+    <div id="login-admin-form">
+      <div class="login-field">
+        <label>Password Admin</label>
+        <input type="password" id="admin-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+      </div>
+    </div>
+    <div id="login-emp-form" style="display:none">
+      <div class="login-field">
+        <label>La tua lettera</label>
+        <select id="emp-letter-select"><option value="">— Seleziona —</option></select>
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="emp-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doEmpLogin()"/>
+      </div>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <button class="login-btn" onclick="doLogin()">Accedi</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="screen-admin">
+  <header class="header">
+    <div class="header-logo">🍽 Capitel</div>
+    <div class="header-month" id="header-month"></div>
+    <span class="badge badge-admin" style="font-size:11px;padding:3px 10px">ADMIN</span>
+    <button class="header-logout" onclick="logout()">Esci</button>
+  </header>
+  <div class="main">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('dipendenti',this)">Dipendenti</button>
+      <button class="tab" onclick="showTab('disponibilita',this)">Disponibilità</button>
+      <button class="tab" onclick="showTab('calendario',this)">Calendario</button>
+      <button class="tab" onclick="showTab('riepilogo',this)">Riepilogo</button>
+      <button class="tab" onclick="showTab('stampa',this)">📋 Stampa</button>
+      <button class="tab" onclick="showTab('impostazioni',this)">Impostazioni</button>
+    </div>
+
+    <!-- DIPENDENTI -->
+    <div class="section active" id="tab-dipendenti">
+      <div class="card">
+        <div class="card-title">Aggiungi dipendente</div>
+        <div class="form-row">
+          <span class="form-label">Nome</span>
+          <input type="text" id="new-name" placeholder="es. Mario Rossi"/>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Lettera</span>
+          <input type="text" id="new-letter" placeholder="A" maxlength="2" style="max-width:70px;flex:none"/>
+          <span style="font-size:12px;color:var(--text3)">Identificativo univoco per il login</span>
+        </div>
+        <div class="form-row" style="align-items:flex-start">
+          <span class="form-label" style="padding-top:2px">Ruoli</span>
+          <div class="roles-checkboxes">
+            <label class="role-check"><input type="checkbox" id="nr-sala" value="sala" checked> <span class="badge badge-sala">Sala</span></label>
+            <label class="role-check"><input type="checkbox" id="nr-comande" value="comande"> <span class="badge badge-comande">Comande</span></label>
+            <label class="role-check"><input type="checkbox" id="nr-bar" value="bar"> <span class="badge badge-bar">Bar</span></label>
+          </div>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Password</span>
+          <input type="text" id="new-emppass" placeholder="password dipendente"/>
+        </div>
+        <div style="text-align:right;margin-top:4px">
+          <button class="btn primary" onclick="addEmployee()">Aggiungi</button>
+        </div>
+      </div>
+      <div id="emp-list"></div>
+    </div>
+
+    <!-- DISPONIBILITA -->
+    <div class="section" id="tab-disponibilita">
+      <div class="card">
+        <div class="form-row">
+          <span class="form-label">Dipendente</span>
+          <select id="disp-emp" onchange="renderDisp()"></select>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Mese</span>
+          <select id="disp-month" onchange="renderDisp()">
+            <option value="0">Gennaio</option><option value="1">Febbraio</option><option value="2">Marzo</option><option value="3">Aprile</option>
+            <option value="4">Maggio</option><option value="5">Giugno</option><option value="6">Luglio</option><option value="7">Agosto</option>
+            <option value="8">Settembre</option><option value="9">Ottobre</option><option value="10">Novembre</option><option value="11">Dicembre</option>
+          </select>
+          <select id="disp-year" onchange="renderDisp()">
+            <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
+          </select>
+        </div>
+      </div>
+      <div class="card" id="disp-container" style="padding:1rem"></div>
+    </div>
+
+    <!-- CALENDARIO -->
+    <div class="section" id="tab-calendario">
+      <div class="month-nav">
+        <button class="btn sm" onclick="changeMonth(-1)">&#8592;</button>
+        <span class="month-nav-title" id="cal-title"></span>
+        <button class="btn sm" onclick="changeMonth(1)">&#8594;</button>
+        <button class="btn primary sm" onclick="autoAssign()" style="margin-left:auto">Auto-assegna</button>
+        <button class="btn sm" onclick="clearAssign()">Azzera</button>
+      </div>
+      <div id="cal-container"></div>
+    </div>
+
+    <!-- RIEPILOGO -->
+    <div class="section" id="tab-riepilogo">
+      <div class="month-nav">
+        <button class="btn sm" onclick="changeMonth(-1)">&#8592;</button>
+        <span class="month-nav-title" id="recap-title"></span>
+        <button class="btn sm" onclick="changeMonth(1)">&#8594;</button>
+      </div>
+      <div class="metrics" id="metrics"></div>
+      <div class="card-title" style="margin-bottom:.75rem">Turni per dipendente</div>
+      <div id="recap-list"></div>
+    </div>
+
+    <!-- STAMPA -->
+    <div class="section" id="tab-stampa">
+      <div class="month-nav no-print">
+        <button class="btn sm" onclick="changeMonth(-1)">&#8592;</button>
+        <span class="month-nav-title" id="print-nav-title"></span>
+        <button class="btn sm" onclick="changeMonth(1)">&#8594;</button>
+        <button class="btn primary sm no-print" onclick="window.print()" style="margin-left:auto">🖨 Stampa / Salva PDF</button>
+      </div>
+      <div id="print-area">
+        <div style="margin-bottom:14px">
+          <div style="font-size:20px;font-weight:700;color:#2d4a3e">🍽 Capitel — Turni <span id="print-month-label"></span></div>
+          <div style="font-size:12px;color:#9e9890;margin-top:2px">Generato il <span id="print-date"></span></div>
+        </div>
+        <div class="sched-wrap"><div id="sched-table-container"></div></div>
+        <div class="print-legend no-print" style="margin-top:14px">
+          <span><span class="cell-pranzo">P</span> Pranzo</span>
+          <span><span class="cell-cena">C</span> Cena</span>
+          <span><span class="cell-both">P+C</span> Entrambi</span>
+          <span style="color:#ccc">· Libero</span>
+          <span style="color:var(--danger)">⚠ Sotto il minimo turni</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMPOSTAZIONI -->
+    <div class="section" id="tab-impostazioni">
+      <div class="card">
+        <div class="card-title">Password Admin</div>
+        <div class="form-row">
+          <span class="form-label">Nuova</span>
+          <input type="text" id="new-admin-pw" placeholder="Nuova password admin"/>
+          <button class="btn primary" onclick="changeAdminPw()">Salva</button>
+        </div>
+        <p style="font-size:12px;color:var(--text3);margin-top:4px">Default: <strong>admin</strong></p>
+      </div>
+      <div class="card">
+        <div class="card-title">⚖️ Turni mensili per dipendente (Auto-assegna)</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">L'auto-assegna distribuisce i turni cercando di rispettare questi limiti, spallandoli lungo tutto il mese.</p>
+        <div class="form-row">
+          <span class="form-label">Minimo</span>
+          <input type="number" id="min-turns" min="0" max="31" style="max-width:80px;flex:none"/>
+          <span class="form-label" style="min-width:60px">Massimo</span>
+          <input type="number" id="max-turns" min="0" max="31" style="max-width:80px;flex:none"/>
+          <button class="btn primary" onclick="saveTurnLimits()">Salva</button>
+        </div>
+        <div id="turn-limit-status" style="margin-top:6px;font-size:13px;color:var(--text3)"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">⏱ Scadenza inserimento disponibilità</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">Dopo questa data i dipendenti non possono più modificare la disponibilità.</p>
+        <div class="form-row">
+          <span class="form-label">Scadenza</span>
+          <input type="date" id="deadline-date"/>
+          <button class="btn primary" onclick="saveDeadline()">Salva</button>
+          <button class="btn danger" onclick="clearDeadline()">Rimuovi</button>
+        </div>
+        <div id="deadline-status" style="margin-top:8px;font-size:13px;color:var(--text3)"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔑 Password Dipendenti</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">Modifica le password di accesso dei singoli dipendenti.</p>
+        <div id="pw-emp-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE -->
+<div id="screen-employee">
+  <header class="header">
+    <div class="header-logo">🍽 Capitel</div>
+    <div class="header-user" id="emp-header-name"></div>
+    <button class="header-logout" onclick="logout()">Esci</button>
+  </header>
+  <div class="main">
+    <div id="emp-deadline-banner"></div>
+    <div class="emp-view-header">
+      <div>
+        <div class="emp-view-name" id="emp-view-name"></div>
+        <div style="font-size:13px;color:var(--text3)" id="emp-view-role"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:.75rem">Seleziona mese</div>
+      <div class="form-row">
+        <span class="form-label">Mese</span>
+        <select id="emp-disp-month" onchange="renderEmpDisp()">
+          <option value="0">Gennaio</option><option value="1">Febbraio</option><option value="2">Marzo</option><option value="3">Aprile</option>
+          <option value="4">Maggio</option><option value="5">Giugno</option><option value="6">Luglio</option><option value="7">Agosto</option>
+          <option value="8">Settembre</option><option value="9">Ottobre</option><option value="10">Novembre</option><option value="11">Dicembre</option>
+        </select>
+        <select id="emp-disp-year" onchange="renderEmpDisp()">
+          <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
+        </select>
+      </div>
+    </div>
+    <div class="card" id="emp-disp-container" style="padding:1rem"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MESI=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const GG_SHORT=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+
+const TURNI={
+  1:[{id:'cena',nome:'Cena',req:{tot:3,comande:1,bar:1}}],
+  2:[{id:'cena',nome:'Cena',req:{tot:3,comande:1,bar:1}}],
+  3:[{id:'cena',nome:'Cena',req:{tot:3,comande:1,bar:0}}],
+  4:[{id:'cena',nome:'Cena',req:{tot:3,comande:1,bar:1}}],
+  5:[{id:'cena',nome:'Cena',req:{tot:4,comande:1,bar:0}}],
+  6:[{id:'pranzo',nome:'Pranzo',req:{tot:3,comande:1,bar:0}},{id:'cena',nome:'Cena',req:{tot:6,comande:2,bar:1}}],
+  0:[{id:'pranzo',nome:'Pranzo',req:{tot:5,comande:2,bar:1}},{id:'cena',nome:'Cena',req:{tot:4,comande:1,bar:1}}]
+};
+
+const STORAGE_KEY='turni_capitel_v3';
+
+let S={
+  adminPassword:'admin',
+  deadline:null,
+  minTurns:13,
+  maxTurns:15,
+  employees:[
+    {id:1,name:'Marco R.',letter:'A',roles:['comande'],password:'marco1'},
+    {id:2,name:'Laura B.',letter:'B',roles:['bar'],password:'laura2'},
+    {id:3,name:'Sofia M.',letter:'C',roles:['comande','sala'],password:'sofia3'},
+    {id:4,name:'Luca T.',letter:'D',roles:['sala'],password:'luca4'},
+    {id:5,name:'Anna V.',letter:'E',roles:['bar','sala'],password:'anna5'},
+    {id:6,name:'Gianni F.',letter:'F',roles:['sala'],password:'gianni6'},
+    {id:7,name:'Elena C.',letter:'G',roles:['comande'],password:'elena7'},
+    {id:8,name:'Pietro S.',letter:'H',roles:['sala'],password:'pietro8'},
+    {id:9,name:'Marta L.',letter:'I',roles:['bar'],password:'marta9'},
+    {id:10,name:'Roberto N.',letter:'L',roles:['sala','comande'],password:'roberto10'},
+    {id:11,name:'Chiara D.',letter:'M',roles:['sala'],password:'chiara11'}
+  ],
+  availability:{},
+  assignments:{},
+  assignedRoles:{},
+  month:new Date().getMonth(),
+  year:new Date().getFullYear(),
+  nextId:12
+};
+
+let currentUser=null;
+let loginMode='admin';
+
+// ── CORE ──────────────────────────────────────────────────
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(S));}catch(e){}}
+function load(){
+  try{
+    const d=localStorage.getItem(STORAGE_KEY);
+    if(!d)return;
+    const L=JSON.parse(d);
+    S=Object.assign(S,L);
+    if(!S.adminPassword)S.adminPassword='admin';
+    if(S.deadline===undefined)S.deadline=null;
+    if(!S.nextId)S.nextId=12;
+    if(S.minTurns===undefined)S.minTurns=13;
+    if(S.maxTurns===undefined)S.maxTurns=15;
+    if(!S.assignedRoles)S.assignedRoles={};
+    // Migrate old single-role employees
+    S.employees.forEach((e,i)=>{
+      if(!e.letter)e.letter='ABCDEFGHILMNOPQRSTUVZ'[i]||String(e.id);
+      if(!e.password)e.password=e.name.split(' ')[0].toLowerCase()+e.id;
+      if(!e.roles){e.roles=e.role?[e.role]:['sala'];delete e.role;}
+    });
+  }catch(e){}
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
+function ak(y,m,d,t){return `${y}_${m}_${d}_${t}`;}
+function avk(eid,y,m,d,t){return `${eid}_${y}_${m}_${d}_${t}`;}
+function ark(eid,y,m,d,t){return `role_${eid}_${y}_${m}_${d}_${t}`;}
+
+function empHasRole(emp,role){return (emp.roles||[]).includes(role);}
+function empPrimaryRole(emp){
+  if(!emp)return 'sala';
+  const r=emp.roles||[];
+  if(r.includes('comande'))return 'comande';
+  if(r.includes('bar'))return 'bar';
+  return 'sala';
+}
+function roleLabel(r){return r==='comande'?'Comande':r==='bar'?'Bar':'Sala';}
+function roleBadge(r){return `<span class="badge badge-${r}">${roleLabel(r)}</span>`;}
+function empRolesBadges(emp){return (emp.roles||['sala']).map(r=>roleBadge(r)).join(' ');}
+
+// ── LOGIN ──────────────────────────────────────────────────
+function setLoginMode(mode,btn){
+  loginMode=mode;
+  document.querySelectorAll('.login-mode-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('login-admin-form').style.display=mode==='admin'?'':'none';
+  document.getElementById('login-emp-form').style.display=mode==='employee'?'':'none';
+  document.getElementById('login-error').classList.remove('show');
+  if(mode==='employee')populateLetterSelect();
+}
+
+function populateLetterSelect(){
+  const sel=document.getElementById('emp-letter-select');
+  sel.innerHTML='<option value="">— Seleziona —</option>'+
+    S.employees.map(e=>`<option value="${e.id}">${e.letter} — ${e.name}</option>`).join('');
+}
+
+function doLogin(){loginMode==='admin'?doAdminLogin():doEmpLogin();}
+
+function doAdminLogin(){
+  const pw=document.getElementById('admin-pw').value;
+  const err=document.getElementById('login-error');
+  if(pw===S.adminPassword){
+    currentUser={type:'admin'};
+    showScreen('admin');
+    document.getElementById('admin-pw').value='';
+    err.classList.remove('show');
+  }else{err.textContent='Password errata.';err.classList.add('show');}
+}
+
+function doEmpLogin(){
+  const idVal=document.getElementById('emp-letter-select').value;
+  const pw=document.getElementById('emp-pw').value;
+  const err=document.getElementById('login-error');
+  if(!idVal){err.textContent='Seleziona la tua lettera.';err.classList.add('show');return;}
+  const emp=S.employees.find(e=>e.id==idVal);
+  if(!emp){err.textContent='Dipendente non trovato.';err.classList.add('show');return;}
+  if(pw===emp.password){
+    currentUser={type:'employee',id:emp.id};
+    showScreen('employee');
+    document.getElementById('emp-pw').value='';
+    err.classList.remove('show');
+    initEmpView(emp);
+  }else{err.textContent='Password errata.';err.classList.add('show');}
+}
+
+function logout(){
+  currentUser=null;showScreen('login');
+  document.getElementById('admin-pw').value='';
+  document.getElementById('emp-pw').value='';
+  document.getElementById('login-error').classList.remove('show');
+}
+
+function showScreen(name){
+  document.getElementById('screen-login').style.display=name==='login'?'flex':'none';
+  document.getElementById('screen-admin').style.display=name==='admin'?'block':'none';
+  document.getElementById('screen-employee').style.display=name==='employee'?'block':'none';
+  if(name==='admin'){
+    document.getElementById('header-month').textContent=`${MESI[S.month]} ${S.year}`;
+    renderEmps();renderCal();syncEmpSelect();renderImpostazioni();
+    showTab('dipendenti',document.querySelector('#screen-admin .tab'));
+  }
+}
+
+// ── EMPLOYEE VIEW ──────────────────────────────────────────
+function initEmpView(emp){
+  document.getElementById('emp-header-name').textContent=`${emp.letter} — ${emp.name}`;
+  document.getElementById('emp-view-name').textContent=emp.name;
+  document.getElementById('emp-view-role').textContent=(emp.roles||['sala']).map(roleLabel).join(' · ');
+  document.getElementById('emp-disp-month').value=S.month;
+  document.getElementById('emp-disp-year').value=S.year;
+  updateDeadlineBanner();renderEmpDisp();
+}
+
+function isDeadlinePassed(){
+  if(!S.deadline)return false;
+  const today=new Date();today.setHours(0,0,0,0);
+  return today>new Date(S.deadline+'T00:00:00');
+}
+
+function updateDeadlineBanner(){
+  const banner=document.getElementById('emp-deadline-banner');
+  if(!S.deadline){
+    banner.innerHTML=`<div class="deadline-banner none">ℹ️ Nessuna scadenza — puoi inserire la disponibilità in qualsiasi momento.</div>`;
+    return;
+  }
+  const passed=isDeadlinePassed();
+  const fmt=new Date(S.deadline+'T00:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
+  banner.innerHTML=passed
+    ?`<div class="deadline-banner expired">🔒 Scadenza passata (${fmt}) — non è più possibile modificare la disponibilità.</div>`
+    :`<div class="deadline-banner active">⏰ Inserisci la disponibilità entro il ${fmt}</div>`;
+}
+
+function renderEmpDisp(){
+  if(!currentUser||currentUser.type!=='employee')return;
+  const emp=S.employees.find(e=>e.id===currentUser.id);
+  if(!emp)return;
+  const m=parseInt(document.getElementById('emp-disp-month').value);
+  const y=parseInt(document.getElementById('emp-disp-year').value);
+  const locked=isDeadlinePassed();
+  const days=daysInMonth(y,m);
+  let html='';
+  for(let d=1;d<=days;d++){
+    const dow=new Date(y,m,d).getDay();
+    const turni=TURNI[dow];
+    if(!turni)continue;
+    const isWe=dow===0||dow===6;
+    html+=`<div class="avail-day"><span class="avail-day-label${isWe?' weekend':''}">${GG_SHORT[dow]} ${d}/${m+1}</span><div style="display:flex;gap:6px;flex-wrap:wrap">`;
+    turni.forEach(t=>{
+      const k=avk(emp.id,y,m,d,t.id);
+      const on=S.availability[k];
+      html+=`<span class="pill${on?' on':''}${locked?' disabled':''}" ${locked?'':'onclick="empToggleAvail('+emp.id+','+y+','+m+','+d+',\''+t.id+'\',this)"'}>${t.nome}</span>`;
+    });
+    html+=`</div></div>`;
+  }
+  document.getElementById('emp-disp-container').innerHTML=html||'<p style="color:var(--text3);font-size:14px">Nessun giorno lavorativo.</p>';
+}
+
+function empToggleAvail(eid,y,m,d,t,el){
+  if(isDeadlinePassed()){toast('⛔ Scadenza superata.');return;}
+  const k=avk(eid,y,m,d,t);
+  S.availability[k]=!S.availability[k];
+  el.classList.toggle('on',S.availability[k]);
+  save();
+  toast(S.availability[k]?'✓ Disponibilità segnata':'Disponibilità rimossa');
+}
+
+// ── ADMIN TABS ─────────────────────────────────────────────
+function showTab(name,btn){
+  document.querySelectorAll('#screen-admin .tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#screen-admin .section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='disponibilita'){syncEmpSelect();renderDisp();}
+  if(name==='calendario')renderCal();
+  if(name==='riepilogo')renderRiepilogo();
+  if(name==='dipendenti')renderEmps();
+  if(name==='impostazioni')renderImpostazioni();
+  if(name==='stampa')renderStampa();
+}
+
+// ── EMPLOYEES CRUD ─────────────────────────────────────────
+function renderEmps(){
+  document.getElementById('emp-list').innerHTML=S.employees.map(e=>`
+    <div class="emp-row">
+      <span class="emp-letter">[${e.letter||'?'}]</span>
+      <span class="emp-name">${e.name}</span>
+      <div class="emp-roles">${empRolesBadges(e)}</div>
+      <span style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace">${e.password||'—'}</span>
+      <button class="btn sm danger" onclick="removeEmp(${e.id})">Rimuovi</button>
+    </div>`).join('')||'<p style="color:var(--text3);font-size:14px;padding:8px">Nessun dipendente.</p>';
+}
+
+function addEmployee(){
+  const n=document.getElementById('new-name').value.trim();
+  const l=document.getElementById('new-letter').value.trim().toUpperCase();
+  const p=document.getElementById('new-emppass').value.trim();
+  const roles=['sala','comande','bar'].filter(r=>document.getElementById('nr-'+r).checked);
+  if(!n)return toast('Inserisci un nome.');
+  if(!l)return toast('Inserisci una lettera identificativa.');
+  if(!p)return toast('Inserisci una password.');
+  if(!roles.length)return toast('Seleziona almeno un ruolo.');
+  if(S.employees.find(e=>e.letter===l))return toast('Lettera già usata da un altro dipendente.');
+  S.employees.push({id:S.nextId++,name:n,letter:l,roles,password:p});
+  document.getElementById('new-name').value='';
+  document.getElementById('new-letter').value='';
+  document.getElementById('new-emppass').value='';
+  document.getElementById('nr-sala').checked=true;
+  document.getElementById('nr-comande').checked=false;
+  document.getElementById('nr-bar').checked=false;
+  renderEmps();save();toast('Dipendente aggiunto');
+}
+
+function removeEmp(id){
+  S.employees=S.employees.filter(e=>e.id!==id);
+  renderEmps();save();toast('Dipendente rimosso');
+}
+
+// ── IMPOSTAZIONI ───────────────────────────────────────────
+function renderImpostazioni(){
+  if(S.deadline)document.getElementById('deadline-date').value=S.deadline;
+  document.getElementById('min-turns').value=S.minTurns;
+  document.getElementById('max-turns').value=S.maxTurns;
+  updateDeadlineStatus();updateTurnLimitStatus();
+  document.getElementById('pw-emp-list').innerHTML=S.employees.map(e=>`
+    <div class="emp-row" style="margin-bottom:6px">
+      <span class="emp-letter">[${e.letter}]</span>
+      <span class="emp-name">${e.name}</span>
+      ${empRolesBadges(e)}
+      <input type="text" value="${e.password||''}" id="pw-field-${e.id}" style="max-width:160px;flex:none"/>
+      <button class="btn sm primary" onclick="saveEmpPw(${e.id})">Salva</button>
+    </div>`).join('')||'<p style="color:var(--text3);font-size:14px">Nessun dipendente.</p>';
+}
+
+function saveEmpPw(id){
+  const val=document.getElementById('pw-field-'+id).value.trim();
+  if(!val)return toast('Password non può essere vuota.');
+  const emp=S.employees.find(e=>e.id===id);if(!emp)return;
+  emp.password=val;save();toast(`Password di ${emp.name} aggiornata`);
+}
+
+function changeAdminPw(){
+  const val=document.getElementById('new-admin-pw').value.trim();
+  if(!val)return toast('Password non può essere vuota.');
+  S.adminPassword=val;document.getElementById('new-admin-pw').value='';
+  save();toast('Password admin aggiornata');
+}
+
+function saveTurnLimits(){
+  const mn=parseInt(document.getElementById('min-turns').value);
+  const mx=parseInt(document.getElementById('max-turns').value);
+  if(isNaN(mn)||isNaN(mx)||mn<0||mx<mn)return toast('Valori non validi: il massimo deve essere ≥ il minimo.');
+  S.minTurns=mn;S.maxTurns=mx;
+  save();updateTurnLimitStatus();toast('Limiti turni salvati');
+}
+
+function updateTurnLimitStatus(){
+  document.getElementById('turn-limit-status').textContent=`Attuale: min ${S.minTurns} — max ${S.maxTurns} turni/mese per dipendente`;
+}
+
+function saveDeadline(){
+  const val=document.getElementById('deadline-date').value;
+  if(!val)return toast('Seleziona una data.');
+  S.deadline=val;save();updateDeadlineStatus();toast('Scadenza salvata');
+}
+
+function clearDeadline(){
+  S.deadline=null;document.getElementById('deadline-date').value='';
+  save();updateDeadlineStatus();toast('Scadenza rimossa');
+}
+
+function updateDeadlineStatus(){
+  const el=document.getElementById('deadline-status');
+  if(!S.deadline){el.textContent='Nessuna scadenza impostata.';return;}
+  const passed=isDeadlinePassed();
+  const fmt=new Date(S.deadline+'T00:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
+  el.innerHTML=passed
+    ?`<span style="color:var(--danger)">🔒 Scadenza PASSATA (${fmt})</span>`
+    :`<span style="color:var(--ok)">✅ Scadenza attiva: ${fmt}</span>`;
+}
+
+// ── AVAILABILITY (admin) ───────────────────────────────────
+function syncEmpSelect(){
+  const sel=document.getElementById('disp-emp');
+  const cur=sel.value;
+  sel.innerHTML=S.employees.map(e=>`<option value="${e.id}"${e.id==cur?' selected':''}>[${e.letter}] ${e.name}</option>`).join('');
+}
+
+function renderDisp(){
+  const m=parseInt(document.getElementById('disp-month').value);
+  const y=parseInt(document.getElementById('disp-year').value);
+  const eid=parseInt(document.getElementById('disp-emp').value);
+  const days=daysInMonth(y,m);
+  let html='';
+  for(let d=1;d<=days;d++){
+    const dow=new Date(y,m,d).getDay();
+    const turni=TURNI[dow];if(!turni)continue;
+    const isWe=dow===0||dow===6;
+    html+=`<div class="avail-day"><span class="avail-day-label${isWe?' weekend':''}">${GG_SHORT[dow]} ${d}/${m+1}</span><div style="display:flex;gap:6px;flex-wrap:wrap">`;
+    turni.forEach(t=>{
+      const k=avk(eid,y,m,d,t.id);
+      const on=S.availability[k];
+      html+=`<span class="pill${on?' on':''}" onclick="toggleAvail(${eid},${y},${m},${d},'${t.id}',this)">${t.nome}</span>`;
+    });
+    html+=`</div></div>`;
+  }
+  document.getElementById('disp-container').innerHTML=html||'<p style="color:var(--text3);font-size:14px">Seleziona un dipendente.</p>';
+}
+
+function toggleAvail(eid,y,m,d,t,el){
+  const k=avk(eid,y,m,d,t);
+  S.availability[k]=!S.availability[k];
+  el.classList.toggle('on',S.availability[k]);
+  save();
+}
+
+// ── CALENDAR ───────────────────────────────────────────────
+function getEmpRoleInTurn(empId,y,m,d,tId){
+  const rk=ark(empId,y,m,d,tId);
+  const emp=S.employees.find(e=>e.id===empId);
+  return S.assignedRoles[rk]||empPrimaryRole(emp);
+}
+
+function renderCal(){
+  const y=S.year,m=S.month;
+  document.getElementById('cal-title').textContent=`${MESI[m]} ${y}`;
+  document.getElementById('header-month').textContent=`${MESI[m]} ${y}`;
+  const days=daysInMonth(y,m);
+  let html='';
+  for(let d=1;d<=days;d++){
+    const dow=new Date(y,m,d).getDay();
+    const turni=TURNI[dow];if(!turni)continue;
+    const isWe=dow===0||dow===6;
+    html+=`<div class="cal-day"><div class="cal-day-label${isWe?' weekend':''}"><div class="dn">${GG_SHORT[dow]}</div><div style="font-size:18px">${d}</div></div><div>`;
+    turni.forEach(t=>{
+      const req=t.req;
+      const key=ak(y,m,d,t.id);
+      const assigned=S.assignments[key]||[];
+      const cOk=assigned.filter(id=>getEmpRoleInTurn(id,y,m,d,t.id)==='comande').length;
+      const bOk=assigned.filter(id=>getEmpRoleInTurn(id,y,m,d,t.id)==='bar').length;
+      const tot=assigned.length;
+      const full=tot>=req.tot&&cOk>=req.comande&&bOk>=req.bar;
+      const partial=tot>0&&!full;
+      const reqClass=full?'req-ok':partial?'req-warn':'req-bad';
+      html+=`<div class="turn-box ${full?'complete':'incomplete'}">
+        <div class="turn-head"><span class="turn-head-name">${t.nome}</span>
+        <span class="turn-head-req ${reqClass}">${tot}/${req.tot} · ${cOk}/${req.comande} cmd · ${bOk}/${req.bar} bar</span></div>
+        <div class="chips">`;
+      S.employees.forEach(emp=>{
+        const avail=S.availability[avk(emp.id,y,m,d,t.id)];
+        const isAssigned=assigned.includes(emp.id);
+        const roleInTurn=getEmpRoleInTurn(emp.id,y,m,d,t.id);
+        const roleHint=isAssigned?` <span style="font-size:10px;opacity:.7">[${roleLabel(roleInTurn).substring(0,3)}]</span>`:'';
+        let cls='chip';
+        if(isAssigned)cls+=' assigned';
+        else if(!avail)cls+=' unavail';
+        html+=`<span class="${cls}" title="${emp.name} (${(emp.roles||[]).map(roleLabel).join('/')})" onclick="toggleAssign(${y},${m},${d},'${t.id}',${emp.id},${!avail&&!isAssigned})">${emp.name.split(' ')[0]}${roleHint}</span>`;
+      });
+      html+=`</div>`;
+      if(full)html+=`<div class="alert ok">✓ Turno completo</div>`;
+      else if(tot<req.tot)html+=`<div class="alert bad">Mancano ${req.tot-tot} persone</div>`;
+      else if(cOk<req.comande)html+=`<div class="alert warn">Manca ${req.comande-cOk} persona alle comande</div>`;
+      else if(bOk<req.bar)html+=`<div class="alert warn">Manca ${req.bar-bOk} persona al bar</div>`;
+      html+=`</div>`;
+    });
+    html+=`</div></div>`;
+  }
+  document.getElementById('cal-container').innerHTML=html;
+}
+
+function toggleAssign(y,m,d,t,eid,blocked){
+  if(blocked)return;
+  const key=ak(y,m,d,t);
+  if(!S.assignments[key])S.assignments[key]=[];
+  const i=S.assignments[key].indexOf(eid);
+  if(i>=0){
+    S.assignments[key].splice(i,1);
+    delete S.assignedRoles[ark(eid,y,m,d,t)];
+  }else{
+    S.assignments[key].push(eid);
+    // Auto-pick best role for this employee in this turn
+    const emp=S.employees.find(e=>e.id===eid);
+    const cur=S.assignments[key];
+    const turno=Object.values(TURNI).flat().find(tt=>tt.id===t);
+    if(turno&&emp){
+      const cNow=cur.filter(id=>getEmpRoleInTurn(id,y,m,d,t)==='comande').length;
+      const bNow=cur.filter(id=>getEmpRoleInTurn(id,y,m,d,t)==='bar').length;
+      let picked=empPrimaryRole(emp);
+      if(cNow<turno.req.comande&&empHasRole(emp,'comande'))picked='comande';
+      else if(bNow<turno.req.bar&&empHasRole(emp,'bar'))picked='bar';
+      S.assignedRoles[ark(eid,y,m,d,t)]=picked;
+    }
+  }
+  renderCal();save();
+}
+
+// ── AUTO-ASSIGN (13-15 turns, distributed) ─────────────────
+function autoAssign(){
+  const y=S.year,m=S.month;
+  const days=daysInMonth(y,m);
+  const MIN=S.minTurns,MAX=S.maxTurns;
+
+  // Count current month assignments
+  const cnt={};
+  S.employees.forEach(e=>cnt[e.id]=0);
+  Object.keys(S.assignments).forEach(k=>{
+    if(k.startsWith(`${y}_${m}_`))(S.assignments[k]||[]).forEach(id=>{if(cnt[id]!==undefined)cnt[id]++;});
+  });
+
+  // Build ordered slot list
+  const slots=[];
+  for(let d=1;d<=days;d++){
+    const dow=new Date(y,m,d).getDay();
+    const turni=TURNI[dow];if(!turni)continue;
+    turni.forEach(t=>slots.push({d,t}));
+  }
+
+  // Sort candidates: first those below MIN, then by lowest count
+  const sortCandidates=arr=>[...arr].sort((a,b)=>{
+    const aU=cnt[a.id]<MIN?0:1, bU=cnt[b.id]<MIN?0:1;
+    if(aU!==bU)return aU-bU;
+    return cnt[a.id]-cnt[b.id];
+  });
+
+  const getRole=(empId,y,m,d,tId)=>{
+    const rk=ark(empId,y,m,d,tId);
+    return S.assignedRoles[rk]||empPrimaryRole(S.employees.find(e=>e.id===empId));
+  };
+
+  for(const {d,t} of slots){
+    const key=ak(y,m,d,t.id);
+    if(!S.assignments[key])S.assignments[key]=[];
+    const cur=S.assignments[key];
+    const req=t.req;
+    const available=e=>S.availability[avk(e.id,y,m,d,t.id)]&&!cur.includes(e.id)&&cnt[e.id]<MAX;
+
+    // Fill comande role
+    let cNow=cur.filter(id=>getRole(id,y,m,d,t.id)==='comande').length;
+    if(cNow<req.comande){
+      const cands=sortCandidates(S.employees.filter(e=>available(e)&&empHasRole(e,'comande')));
+      cands.slice(0,req.comande-cNow).forEach(e=>{
+        cur.push(e.id);S.assignedRoles[ark(e.id,y,m,d,t.id)]='comande';cnt[e.id]++;
+      });
+    }
+
+    // Fill bar role
+    let bNow=cur.filter(id=>getRole(id,y,m,d,t.id)==='bar').length;
+    if(bNow<req.bar){
+      const cands=sortCandidates(S.employees.filter(e=>available(e)&&empHasRole(e,'bar')));
+      cands.slice(0,req.bar-bNow).forEach(e=>{
+        cur.push(e.id);S.assignedRoles[ark(e.id,y,m,d,t.id)]='bar';cnt[e.id]++;
+      });
+    }
+
+    // Fill remaining total
+    const tNeed=req.tot-cur.length;
+    if(tNeed>0){
+      const cands=sortCandidates(S.employees.filter(e=>available(e)));
+      cands.slice(0,tNeed).forEach(e=>{
+        cur.push(e.id);
+        if(!S.assignedRoles[ark(e.id,y,m,d,t.id)])S.assignedRoles[ark(e.id,y,m,d,t.id)]=empPrimaryRole(e);
+        cnt[e.id]++;
+      });
+    }
+  }
+
+  // Second pass: top up anyone still below MIN (add to slots with room)
+  const stillUnder=S.employees.filter(e=>cnt[e.id]<MIN);
+  if(stillUnder.length){
+    for(const {d,t} of slots){
+      const key=ak(y,m,d,t.id);
+      const cur=S.assignments[key]||[];
+      stillUnder.forEach(e=>{
+        if(cnt[e.id]>=MIN||cur.includes(e.id)||!S.availability[avk(e.id,y,m,d,t.id)]||cnt[e.id]>=MAX)return;
+        // Allow up to req.tot + 1 overflow to help reach minimum
+        if(cur.length<t.req.tot+1){
+          cur.push(e.id);
+          if(!S.assignedRoles[ark(e.id,y,m,d,t.id)])S.assignedRoles[ark(e.id,y,m,d,t.id)]=empPrimaryRole(e);
+          cnt[e.id]++;
+        }
+      });
+    }
+  }
+
+  renderCal();save();
+  toast(`✓ Turni assegnati (min ${MIN} / max ${MAX})`);
+}
+
+function clearAssign(){
+  const y=S.year,m=S.month;
+  Object.keys(S.assignments).forEach(k=>{if(k.startsWith(`${y}_${m}_`))delete S.assignments[k];});
+  Object.keys(S.assignedRoles).forEach(k=>{if(k.includes(`_${y}_${m}_`))delete S.assignedRoles[k];});
+  renderCal();save();toast('Assegnazioni azzerate');
+}
+
+function changeMonth(dir){
+  S.month+=dir;
+  if(S.month>11){S.month=0;S.year++;}
+  if(S.month<0){S.month=11;S.year--;}
+  document.getElementById('disp-month').value=S.month;
+  document.getElementById('disp-year').value=S.year;
+  renderCal();
+  if(document.getElementById('recap-title'))renderRiepilogo();
+}
+
+// ── RIEPILOGO ──────────────────────────────────────────────
+function renderRiepilogo(){
+  const y=S.year,m=S.month;
+  document.getElementById('recap-title').textContent=`${MESI[m]} ${y}`;
+  const days=daysInMonth(y,m);
+  let tot=0,ok=0,nok=0;
+  const emp_turns={};
+  S.employees.forEach(e=>emp_turns[e.id]=[]);
+  for(let d=1;d<=days;d++){
+    const dow=new Date(y,m,d).getDay();
+    const turni=TURNI[dow];if(!turni)continue;
+    turni.forEach(t=>{
+      tot++;
+      const key=ak(y,m,d,t.id);
+      const assigned=S.assignments[key]||[];
+      const req=t.req;
+      const c=assigned.filter(id=>getEmpRoleInTurn(id,y,m,d,t.id)==='comande').length;
+      const b=assigned.filter(id=>getEmpRoleInTurn(id,y,m,d,t.id)==='bar').length;
+      if(assigned.length>=req.tot&&c>=req.comande&&b>=req.bar)ok++;else nok++;
+      assigned.forEach(id=>{if(emp_turns[id])emp_turns[id].push({d,dow,turno:t.nome});});
+    });
+  }
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Turni totali</div><div class="metric-val">${tot}</div></div>
+    <div class="metric"><div class="metric-label">Coperti</div><div class="metric-val good">${ok}</div></div>
+    <div class="metric"><div class="metric-label">Scoperti</div><div class="metric-val ${nok>0?'bad':''}">${nok}</div></div>
+    <div class="metric"><div class="metric-label">Dipendenti</div><div class="metric-val">${S.employees.length}</div></div>`;
+  document.getElementById('recap-list').innerHTML=S.employees.map(e=>{
+    const tt=emp_turns[e.id]||[];
+    const under=tt.length<S.minTurns;
+    return `<div class="recap-emp">
+      <div class="recap-head">
+        <span class="recap-name">${e.name}</span>
+        ${empRolesBadges(e)}
+        <span class="recap-n" style="${under?'color:var(--danger)':''}">${tt.length} turni${under?' ⚠ sotto min':''}</span>
+      </div>
+      <div class="shift-tags">${tt.map(t=>`<span class="shift-tag">${GG_SHORT[t.dow]} ${t.d} ${t.turno}</span>`).join('')||'<span style="font-size:13px;color:var(--text3)">Nessun turno</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── STAMPA ─────────────────────────────────────────────────
+function renderStampa(){
+  const y=S.year,m=S.month;
+  const label=`${MESI[m]} ${y}`;
+  document.getElementById('print-nav-title').textContent=label;
+  document.getElementById('print-month-label').textContent=label;
+  document.getElementById('print-date').textContent=new Date().toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
+
+  const days=daysInMonth(y,m);
+  // Collect working days
+  const workDays=[];
+  for(let d=1;d<=days;d++){
+    const dow=new Date(y,m,d).getDay();
+    if(TURNI[dow])workDays.push({d,dow});
+  }
+
+  // Header row: per-day columns
+  let thead=`<thead><tr><th class="emp-col-h" style="background:#2d4a3e;color:white;text-align:left">Dipendente</th>`;
+  workDays.forEach(({d,dow})=>{
+    const isWe=dow===0||dow===6;
+    const turni=TURNI[dow]||[];
+    const hasP=turni.some(t=>t.id==='pranzo');
+    const hasC=turni.some(t=>t.id==='cena');
+    const label=hasP&&hasC?'P·C':hasP?'P':'C';
+    thead+=`<th style="${isWe?'background:#e8dcc8;':''}min-width:44px">${GG_SHORT[dow]}<br><span style="font-size:10px">${d}</span><br><span style="font-size:9px;opacity:.7">${label}</span></th>`;
+  });
+  thead+=`<th class="total-col" style="background:#2d4a3e;color:white">Tot</th></tr></thead>`;
+
+  // One row per employee
+  let tbody='<tbody>';
+  S.employees.forEach(emp=>{
+    let tot=0;
+    tbody+=`<tr><td class="emp-col">[${emp.letter}] ${emp.name}</td>`;
+    workDays.forEach(({d,dow})=>{
+      const turni=TURNI[dow]||[];
+      const hasP=turni.some(t=>t.id==='pranzo');
+      const hasC=turni.some(t=>t.id==='cena');
+      const inP=hasP&&(S.assignments[ak(y,m,d,'pranzo')]||[]).includes(emp.id);
+      const inC=hasC&&(S.assignments[ak(y,m,d,'cena')]||[]).includes(emp.id);
+      const isWe=dow===0||dow===6;
+      const weBg=isWe?'background:#fef9f0;':'';
+      if(inP&&inC){
+        tbody+=`<td style="${weBg}padding:1px"><div class="cell-both">P+C</div></td>`;tot+=2;
+      }else if(inP){
+        tbody+=`<td style="${weBg}"><div class="cell-pranzo">P</div></td>`;tot++;
+      }else if(inC){
+        tbody+=`<td style="${weBg}"><div class="cell-cena">C</div></td>`;tot++;
+      }else{
+        tbody+=`<td class="cell-off" style="${weBg}">·</td>`;
+      }
+    });
+    const under=tot<S.minTurns;
+    tbody+=`<td class="total-col" style="${under?'color:#8b3a2a;':''}">${tot}${under?'⚠':''}</td></tr>`;
+  });
+
+  // Totals row per day
+  tbody+=`<tr style="background:#f0ede6;font-weight:600"><td class="emp-col" style="background:#e8e3db">Copertura</td>`;
+  workDays.forEach(({d,dow})=>{
+    const turni=TURNI[dow]||[];
+    const cells=turni.map(t=>{
+      const asgn=(S.assignments[ak(y,m,d,t.id)]||[]).length;
+      const full=asgn>=t.req.tot;
+      return `<span style="font-size:10px;${full?'color:#2d5a3a':'color:#8b3a2a'}">${t.nome[0]}:${asgn}/${t.req.tot}</span>`;
+    }).join('<br>');
+    tbody+=`<td style="font-size:10px;padding:2px 4px">${cells}</td>`;
+  });
+  tbody+=`<td class="total-col">—</td></tr>`;
+  tbody+='</tbody>';
+
+  document.getElementById('sched-table-container').innerHTML=
+    `<table class="sched-table">${thead}${tbody}</table>`;
+}
+
+// ── INIT ───────────────────────────────────────────────────
+load();
+document.getElementById('disp-month').value=S.month;
+document.getElementById('disp-year').value=S.year;
+</script>
+</body>
+</html>
